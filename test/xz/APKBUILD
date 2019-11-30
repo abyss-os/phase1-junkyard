@@ -1,0 +1,44 @@
+pkgname=xz
+pkgver=5.2.4
+pkgrel=0
+pkgdesc="Library and CLI tools for XZ and LZMA compressed files"
+url="https://tukaani.org/xz"
+arch="all"
+license="GPL-2.0-or-later Public-Domain"
+subpackages="$pkgname-dev $pkgname-doc"
+source="https://src.fedoraproject.org/lookaside/pkgs/xz/xz-5.2.4.tar.xz/sha512/00db7dd31a61541b1ce6946e0f21106f418dd1ac3f27cdb8682979cbc3bd777cd6dd1f04f9ba257a0a7e24041e15ca40d0dd5c130380dce62280af67a0beb97f/xz-5.2.4.tar.xz"
+makedepends="diffutils"
+
+build() {
+	cd "$builddir"
+	./configure \
+		--build=$CBUILD \
+		--host=$CHOST \
+		--prefix=/usr \
+		--sbindir=/usr/bin \
+		--sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		--infodir=/usr/share/info \
+		--localstatedir=/var \
+		--disable-rpath \
+		--disable-werror \
+		--disable-doc
+
+	sed -i \
+		-e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
+		-e 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' \
+		libtool
+	make
+}
+
+check() {
+	cd "$builddir"
+	LD_LIBRARY_PATH="$(pwd)/src/liblzma/.libs" make check
+}
+
+package() {
+	cd "$builddir"
+	make DESTDIR="$pkgdir" install
+}
+
+b2sums="1ff9df25cf1649610768a5d9040390e718f679c22e8a15fd20d72ed66aaa0da4cd74f5ce3c8e2dbc97a986706f784bc740c7e3353eca228ba72509c844160a09  xz-5.2.4.tar.xz"
