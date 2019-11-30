@@ -1,6 +1,6 @@
 pkgname=xz
 pkgver=5.2.4
-pkgrel=2
+pkgrel=3
 pkgdesc="Library and CLI tools for XZ and LZMA compressed files"
 url="https://tukaani.org/xz"
 arch="all"
