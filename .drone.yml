@@ -1,0 +1,23 @@
+kind: pipeline
+name: x86_64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: build
+    image: abyssos/abyss:dev
+    commands:
+      - env
+      - apk update
+      - apk upgrade -a
+      - apk add git minio-client
+      - abuild-keygen -ain
+      - ./.scripts/drone.sh
+    environment:
+      GH_TOKEN:
+        from_secret: github_token
+      MC_HOST_master:
+        from_secret: MC_HOST_master
+    pull: always
